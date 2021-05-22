@@ -17,29 +17,20 @@ if [ -z $REMOTE_DEST_DIR ]; then
     exit 1
 fi
 
-_SEND_TO_ALL_HPIC_FILES=(
+_SEND_TO_ALL=(
     check_status.sh
+    parse_status_files.py
+    kill_simulations.sh
+    configure_hpic_xgc_simulations.sh
+    xgc_coords.csv
     send_results_to_mikhail.sh
-    patterns_to_delete.txt
+    #xgc.f0.mesh.bp
+    #xgc.bfield.bp
+    #xgc.f0.00055.bp
 )
 
-
-_SEND_TO_ALL_RUSTBCA_FILES=(
-   rustbca_launcher.sh
-   send_rustbca_results_to_mikhail.sh
-   check_rustbca_status.sh
-)
-
-_SEND_TO_ALL=${_SEND_TO_ALL_RUSTBCA_FILES[*]}
 
 for host in $lcpp_hosts; do
-    # Send the Cargo.toml file with the host-specific path to the RustBCA
-    # installation directory so we can run rustbca simulations from
-    # wherever we want
-    sed "s/LCPP_BOX_USERNAME/$host/g" Cargo.toml.template > tmp.toml
-    scp tmp.toml $host:$REMOTE_DEST_DIR/Cargo.toml
-    rm tmp.toml
-
     for file in ${_SEND_TO_ALL[*]}; do
         scp $file $host:$REMOTE_DEST_DIR
     done
