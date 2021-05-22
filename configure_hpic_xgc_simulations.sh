@@ -1,26 +1,21 @@
 #!/usr/bin/env bash
 
-if [ "$#" -ne 4 ]; then
-    echo 'usage: ./configure_hpic_xgc_simulationr.sh <xgc.f0.mesh.bp> <xgc.bfield.bp <xgc.f0.#####.bp> <xgc_coords.csv>'
-    exit 0
-fi
-
 ### BEGIN USER MODIFICATION
 
 # Path to hpic_1d3v executable installed on machine.
-hpic_1d3v_path=/home/mikhail/hPIC/hpic_1d3v/hpic
+hpic_1d3v_path=/home/pc202/mikhail-hpic-runs/hPIC/hpic_1d3v/hpic
 
 # XGC initial maxwellian dist
-XGC_F0_MESH_BP=$1
+XGC_F0_MESH_BP=xgc.f0.mesh.bp
 
 # XGC Bfield file
-XGC_BFIELD_BP=$2
+XGC_BFIELD_BP=xgc.bfield.bp
 
 # XGC DIST BP
-XGC_F0_XXXXX_BP=$3
+XGC_F0_XXXXX_BP=xgc.f0.00055.bp
 
 # input file  CSV of format XGC_MESH_COORDINAGE,SURFACE_ANGLE
-XGC_COORDS=$4
+XGC_COORDS=xgc_coords.csv
 
 
 # Hpic Params
@@ -103,8 +98,9 @@ for line in $(sed 1,1d $XGC_COORDS); do
                s/MESH_COORD/$mesh_coord/g; \
                s/THETA/$surface_theta/g")
 
-    # write the command to a new bash script
+    # write the command to a new bash scripti
     sim_script="${scripts_dir}/run_${sim_id}.sh"
+    echo building $sim_script
     echo """#!/usr/bin/env bash
 cd $sim_dir
 date $DATE_FMT > simulation-start
@@ -121,11 +117,15 @@ fi""" > $sim_script
     # Add this simulation script to the parent script runner. The script is
     # launched asynchronously
     echo """
-echo Starting hPIC 1d3v simulation for $sim_id...
+echo starting hPIC 1d3v simulation for $sim_id...
 $sim_script &""" >> $parent_script
 done
 
 
 echo """
-echo started $num_sims simulations
-echo Use check_status.sh to view the status of each simulation." >> $parent_script
+
+echo Started $num_sims simulations.
+echo Run check_status.sh to view the status of each simulation." >> $parent_script
+
+echo
+echo building parent script: $parent_script

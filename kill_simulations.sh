@@ -6,5 +6,10 @@
 
 simulation_parent_id="xgc_d3d_sample_run"
 
-ps -ef | grep "hpic -xgc ${simulation_parent_id}" | head -n -1 | awk '{print $2}' | xargs kill
+procs=$(ps -ef | grep "hpic -xgc ${simulation_parent_id}" | head -n -1 | awk '{print $2}')
+
+for pid in $procs; do
+    kill $pid
+    echo killed $pid
+done
 
