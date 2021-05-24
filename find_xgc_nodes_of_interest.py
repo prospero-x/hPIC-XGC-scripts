@@ -2,6 +2,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 
+"""
+This script is meant to be run to visually inspect an XGC mesh in order
+to manually select nodes of interest. The nodes of interest will be used
+to run hPIC simulations (one simulation per node)
+"""
+
 
 if len(sys.argv) < 5:
     print('usage: python plot_xgc_mesh.py <mesh.csv> rmin rmax zmin zmax')
