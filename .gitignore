@@ -1,0 +1,14 @@
+# cmake generated files
+CMakeFiles
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+
+# executables
+dump-xgc-mesh
+
+# generated bash scripts
+launch_hpic_simulations*
+
+# swap files
+*.swp

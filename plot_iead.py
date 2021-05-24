@@ -15,11 +15,11 @@ fontsize = 24
 fig, ax = plt.subplots(figsize=(14,10))
 ax.tick_params(axis = 'both', which = 'major', labelsize = fontsize)
 ax.tick_params(axis = 'both', which = 'minor', labelsize = fontsize)
-cs = ax.contour(E, A, IEAD, cmap = plt.bone())
+cs = ax.contourf(E, A, IEAD)
 fig.colorbar(cs)
 #plt.clabel(CS, inline = 1, fontsize = 30)
 
-plt.ylim([0, 30])
+plt.ylim([0, 120])
 plt.xlabel('Angle [deg]', fontsize = fontsize)
 plt.ylabel('Energy [eV]', fontsize = fontsize)
 plt.title('hPIC - Ion Energy Angle Distribution', fontsize = fontsize)
