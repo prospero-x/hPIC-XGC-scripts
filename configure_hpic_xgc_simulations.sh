@@ -14,8 +14,8 @@ XGC_BFIELD_BP=xgc.bfield.bp
 # XGC DIST BP
 XGC_F0_XXXXX_BP=xgc.f0.00055.bp
 
-# input file  CSV of format XGC_MESH_COORDINAGE,SURFACE_ANGLE
-XGC_COORDS=xgc_coords.csv
+# input file  CSV of format XGC_MESH_NODE,SURFACE_ANGLE
+XGC_NODES=xgc_nodes.csv
 
 
 # Hpic Params
@@ -54,7 +54,7 @@ HPIC_COMMAND_TEMPLATE="${hpic_1d3v_path} -xgc SIMID $debye_lengths_in_domain
             $BC_LEFT_VALUE $BC_RIGHT_VALUE $RF_wave_frequency $RF_Voltage_RIGHT
             $RF_Voltage_LEFT $kinfo $kgrid $kpart $kfluid 1 \"uniform\"
             \"$debye_lengths_in_domain\" \"$total_elems\" \"0\" $XGC_F0_MESH_BP
-            $XGC_BFIELD_BP $XGC_F0_XXXXX_BP MESH_COORD THETA"
+            $XGC_BFIELD_BP $XGC_F0_XXXXX_BP MESH_NODE --surface_theta THETA"
 
 
 # For keeping track of simulation start and end times
@@ -70,10 +70,10 @@ echo "#!/usr/bin/env bash" > $parent_script
 chmod 744 $parent_script
 
 num_sims=0
-for line in $(sed 1,1d $XGC_COORDS); do
+for line in $(sed 1,1d $XGC_NODES); do
     num_sims=$((num_sims + 1))
 
-    mesh_coord=$(echo $line | cut -d, -f1)
+    mesh_node=$(echo $line | cut -d, -f1)
     surface_theta=$(echo $line | cut -d, -f2)
 
     sim_id="${simulation_parent_id}_node_${mesh_coord}"
@@ -95,9 +95,11 @@ for line in $(sed 1,1d $XGC_COORDS); do
 
     sim_cmd=$(echo $HPIC_COMMAND_TEMPLATE \
         | sed "s/SIMID/$sim_id/g; \
-               s/MESH_COORD/$mesh_coord/g; \
+               s/MESH_NODE/$mesh_node/g; \
                s/THETA/$surface_theta/g")
 
+    echo $sim_cmd
+    exit
     # write the command to a new bash scripti
     sim_script="${scripts_dir}/run_${sim_id}.sh"
     echo building $sim_script
