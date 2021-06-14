@@ -3,7 +3,7 @@
 ### BEGIN USER MODIFICATION
 
 # Path to hpic_1d3v executable installed on machine.
-hpic_1d3v_path=/home/pc202/mikhail-hpic-runs/hPIC/hpic_1d3v/hpic
+hpic_1d3v_path=/home/mikhail/hPIC/hpic_1d3v/hpic
 
 # XGC initial maxwellian dist
 XGC_F0_MESH_BP=xgc.f0.mesh.bp
@@ -40,7 +40,7 @@ kinfo=10  # number of times info is printed to stdout
 kgrid=0   # numver of times griddata is saved
 kpart=0   # number of times particledata is saved
 kfluid=0  # number of times fluid data is saved
-
+list_wall_particles=0  # boolean: whether to print particles intersecting left boundary
 
 ### END USER MODIFICATION
 
@@ -52,9 +52,10 @@ HPIC_COMMAND_TEMPLATE="${hpic_1d3v_path} -xgc SIMID $debye_lengths_in_domain
             $grid_points_per_debye_length $time_steps_per_gyroperiod
             $ion_acoustic_transit_times $particles_per_cell
             $BC_LEFT_VALUE $BC_RIGHT_VALUE $RF_wave_frequency $RF_Voltage_RIGHT
-            $RF_Voltage_LEFT $kinfo $kgrid $kpart $kfluid 1 \"uniform\"
-            \"$debye_lengths_in_domain\" \"$total_elems\" \"0\" $XGC_F0_MESH_BP
-            $XGC_BFIELD_BP $XGC_F0_XXXXX_BP MESH_NODE --surface_theta THETA"
+            $RF_Voltage_LEFT $kinfo $kgrid $kpart $kfluid $list_wall_particles
+            1 \"uniform\" \"$debye_lengths_in_domain\" \"$total_elems\" \"0\"
+            $XGC_F0_MESH_BP $XGC_BFIELD_BP $XGC_F0_XXXXX_BP MESH_NODE
+            --surface_theta THETA"
 
 
 # For keeping track of simulation start and end times
@@ -76,13 +77,15 @@ for line in $(sed 1,1d $XGC_NODES); do
     mesh_node=$(echo $line | cut -d, -f1)
     surface_theta=$(echo $line | cut -d, -f2)
 
-    sim_id="${simulation_parent_id}_node_${mesh_coord}"
+    sim_id="${simulation_parent_id}_node_${mesh_node}"
 
-    # Each simulation takes place in its own directory, saving output there
+    # Each simulation takes place in its own directory. Simulation output
+    # will be saved there.
     sim_dir=$output_directory/$sim_id
     mkdir -p $sim_dir
 
-    # Make a link instead of copying the file because they can be large.
+    # XGC files can be large. Make a hard link instead of copying the file
+    # each time.
     if [ ! -f $sim_dir/$XGC_F0_MESH_BP ]; then
         ln $XGC_F0_MESH_BP    $sim_dir/$XGC_F0_MESH_BP
     fi
@@ -93,14 +96,13 @@ for line in $(sed 1,1d $XGC_NODES); do
         ln $XGC_F0_XXXXX_BP   $sim_dir/$XGC_F0_XXXXX_BP
     fi
 
+    # Format the command string with specific parameters
     sim_cmd=$(echo $HPIC_COMMAND_TEMPLATE \
         | sed "s/SIMID/$sim_id/g; \
                s/MESH_NODE/$mesh_node/g; \
                s/THETA/$surface_theta/g")
 
-    echo $sim_cmd
-    exit
-    # write the command to a new bash scripti
+    # write the command to a new bash script
     sim_script="${scripts_dir}/run_${sim_id}.sh"
     echo building $sim_script
     echo """#!/usr/bin/env bash
@@ -116,18 +118,18 @@ fi""" > $sim_script
 
     chmod 744 $sim_script
 
-    # Add this simulation script to the parent script runner. The script is
-    # launched asynchronously
+    # Add this simulation script to the parent script runner. The simulation
+    # script is launched asynchronously from the parent script.
     echo """
 echo starting hPIC 1d3v simulation for $sim_id...
 $sim_script &""" >> $parent_script
 done
 
-
+# Finally, print extra info in the parent script runner.
 echo """
 
 echo Started $num_sims simulations.
 echo Run check_status.sh to view the status of each simulation." >> $parent_script
 
 echo
-echo building parent script: $parent_script
+echo built parent runner script: $parent_script
