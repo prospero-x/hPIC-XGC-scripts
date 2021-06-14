@@ -17,7 +17,11 @@ ax.tick_params(axis = 'both', which = 'major', labelsize = fontsize)
 ax.tick_params(axis = 'both', which = 'minor', labelsize = fontsize)
 cs = ax.contourf(E, A, IEAD)
 fig.colorbar(cs)
-#plt.clabel(CS, inline = 1, fontsize = 30)
+
+# Plot a horizontal line at the Threshold sputtering energy
+Eth = 29.49
+y = [Eth] * len(angles)
+plt.plot(angles, y, 'r-')
 
 plt.ylim([0, 120])
 plt.xlabel('Angle [deg]', fontsize = fontsize)
