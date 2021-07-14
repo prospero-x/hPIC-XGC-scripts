@@ -1,7 +1,7 @@
 # hPIC-with-XGC helper scripts
 
 These scripts are meant to facilitate the execution, tracking, and monitoring of hPIC simulations launced with XGC input.
-[hPIC](https://www.sciencedirect.com/science/article/abs/pii/S0010465518301012?via%3Dihub) is a hybrid Particle-in-Cell plasma simulation code written at LCPP at University of Illinois at Urbana-Champaign.[XGC](https://hbps.pppl.gov/computing/xgc-1) is a gyrokinetic particle-in-cell code written at Princeton Plasma Physics Laboratory. This code is meant to be run after XGC simulations. It configures hPIC simulations to be run for each node of interest in the XGC messh.
+[hPIC](https://www.sciencedirect.com/science/article/abs/pii/S0010465518301012?via%3Dihub) is a hybrid Particle-in-Cell plasma simulation code written at LCPP at University of Illinois at Urbana-Champaign. [XGC](https://hbps.pppl.gov/computing/xgc-1) is a gyrokinetic particle-in-cell code written at Princeton Plasma Physics Laboratory. This code is meant to be run after XGC simulations. It configures hPIC simulations to be run for each node of interest in the XGC messh.
 
 ### Requirements:
 The output of a completed XGC simulation, including a`xgc.f0.mesh.bp`, `xgc.bfield.bp`, and `xgc.f0.#####.bp`, where `#####` represents the time step. The hPIC simulation will be configured based on the distribution found in `xgc.f0.#####.bp`.
