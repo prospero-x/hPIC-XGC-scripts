@@ -1,7 +1,7 @@
 # hPIC-with-XGC helper scripts
 
-These scripts are meant to facilitate the execution, tracking, and monitoring of hPIC simulations launced with XGC input. 
-[hPIC](https://www.sciencedirect.com/science/article/abs/pii/S0010465518301012?via%3Dihub) is a hybrid Particle-in-Cell plasma simulation code written at LCPP at University of Illinois at Urbana-Champaign. XGC is a gyrokinetic plasma. [XGC](https://hbps.pppl.gov/computing/xgc-1) is a gyrokinetic particle-in-cell code written at Princeton Plasma Physics Laboratory. This code is meant to be run after XGC simulations. It configures hPIC simulations to be run for each node of interest in the XGC messh.
+These scripts are meant to facilitate the execution, tracking, and monitoring of hPIC simulations launced with XGC input.
+[hPIC](https://www.sciencedirect.com/science/article/abs/pii/S0010465518301012?via%3Dihub) is a hybrid Particle-in-Cell plasma simulation code written at LCPP at University of Illinois at Urbana-Champaign.[XGC](https://hbps.pppl.gov/computing/xgc-1) is a gyrokinetic particle-in-cell code written at Princeton Plasma Physics Laboratory. This code is meant to be run after XGC simulations. It configures hPIC simulations to be run for each node of interest in the XGC messh.
 
 ### Requirements:
 The output of a completed XGC simulation, including a`xgc.f0.mesh.bp`, `xgc.bfield.bp`, and `xgc.f0.#####.bp`, where `#####` represents the time step. The hPIC simulation will be configured based on the distribution found in `xgc.f0.#####.bp`.
@@ -18,7 +18,7 @@ MESH_NODE,SURFACE_ANGLE
 36803,11
 ```
 
-The first line of this file **must** contain column names (they can be called anything)
+The first line of this file **must** contain column names (they can be called anything).
 
 ### Step 3: Configure hPIC simulations
 Update all bash fields in `configure_hpic_xgc_simulations.sh` between the lines `### BEGIN USER MODIFICATION` and `### END USER MODIFICATION`. For a further
@@ -26,7 +26,7 @@ explanation of fields, run `./hpic -xgc` to see a print-out of field description
 
 Once you have modified `configure_hpic_xgc_simulations.sh` to your liking, run:
 ```bash
-./configure_hpic_xgc_simulations.sh xgc.f0.mesh.bp xgc.bfield.bp xgc.f0.#####.bp xgc_nodes.csv 
+./configure_hpic_xgc_simulations.sh xgc.f0.mesh.bp xgc.bfield.bp xgc.f0.#####.bp xgc_nodes.csv.
 ```
 
 This will create the following:
